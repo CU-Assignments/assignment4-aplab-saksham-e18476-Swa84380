@@ -1,0 +1,52 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Solution {
+
+    // Function to return a beautiful array
+    public int[] beautifulArray(int n) {
+        List<Integer> result = constructBeautifulArray(n);
+        // Convert List to Array
+        int[] arr = new int[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            arr[i] = result.get(i);
+        }
+        return arr;
+    }
+
+    // Recursive function to construct the beautiful array
+    private List<Integer> constructBeautifulArray(int n) {
+        // Base Case
+        if (n == 1) {
+            List<Integer> base = new ArrayList<>();
+            base.add(1);
+            return base;
+        }
+
+        // Recursively build arrays for odd and even parts
+        List<Integer> oddPart = constructBeautifulArray((n + 1) / 2);
+        List<Integer> evenPart = constructBeautifulArray(n / 2);
+
+        List<Integer> result = new ArrayList<>();
+
+        // Add odd numbers (2x - 1)
+        for (int num : oddPart) {
+            result.add(num * 2 - 1);
+        }
+
+        // Add even numbers (2x)
+        for (int num : evenPart) {
+            result.add(num * 2);
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        int n = 5; // Example input
+        int[] beautiful = new Solution().beautifulArray(n);  // Create an instance of Solution and call beautifulArray
+        for (int num : beautiful) {
+            System.out.print(num + " ");  // Output the result
+        }
+    }
+}
