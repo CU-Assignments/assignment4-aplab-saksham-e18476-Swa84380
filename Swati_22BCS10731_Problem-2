@@ -1,0 +1,51 @@
+import java.util.*;
+
+class Solution {
+    public List<List<Integer>> getSkyline(int[][] buildings) {
+        int edgeIdx = 0;
+        List<int[]> edges = new ArrayList<>();
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[0] - a[0]);
+        List<List<Integer>> skyline = new ArrayList<>();
+
+        // Step 1: Create the edges from the buildings
+        for (int i = 0; i < buildings.length; ++i) {
+            edges.add(new int[] {buildings[i][0], i}); // left edge
+            edges.add(new int[] {buildings[i][1], i}); // right edge
+        }
+
+        // Step 2: Sort the edges
+        Collections.sort(edges, (a, b) -> a[0] - b[0]);
+
+        // Step 3: Process the edges
+        while (edgeIdx < edges.size()) {
+            int currHeight;
+            int currX = edges.get(edgeIdx)[0];
+
+            // Process all edges at the current x-coordinate
+            while (edgeIdx < edges.size() && currX == edges.get(edgeIdx)[0]) {
+                int buildingIdx = edges.get(edgeIdx)[1];
+                int[] building = buildings[buildingIdx];
+
+                // If it's the left edge, add the building height to the priority queue
+                if (building[0] == currX) {
+                    pq.offer(new int[] {building[2], building[1]});
+                }
+                edgeIdx++;
+            }
+
+            // Remove buildings whose right edge has been processed
+            while (!pq.isEmpty() && pq.peek()[1] <= currX) {
+                pq.poll();
+            }
+
+            // Get the current maximum height
+            currHeight = pq.isEmpty() ? 0 : pq.peek()[0];
+
+            // If the height changes, add the current point to the skyline
+            if (skyline.isEmpty() || skyline.get(skyline.size() - 1).get(1) != currHeight) {
+                skyline.add(Arrays.asList(currX, currHeight));
+            }
+        }
+        return skyline;
+    }
+}
